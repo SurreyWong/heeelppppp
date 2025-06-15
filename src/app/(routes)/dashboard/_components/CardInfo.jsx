@@ -3,16 +3,28 @@ import {
     ReceiptText,
     Wallet,
     Sparkles,
-    CircleDollarSign
+    CircleDollarSign,
+    BicepsFlexed
 } from "lucide-react";
 
 import React, {useEffect, useState} from "react";
+import getFinancialAdvice from "utils/getFinancialAdvice";
+
+const formatNumber = (number) => {
+  return new Intl.NumberFormat('en-MY', {
+    style: 'decimal',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(number);
+};
 
 function CardInfo({ budgetList, incomeList, expenseList}){
     const[totalBudget, setTotalBudget] = useState(0)
     const [totalSpend, setTotalSpend] =useState(0)
     const [totalIncome, setTotalIncome] = useState(0)
     const [financialAdvice, setFinancialAdvice]=useState('')
+    const incomeMinusBudget = totalIncome - totalBudget;
+    const overBudget = totalBudget > totalIncome;
 
     useEffect(()=>{
         if(budgetList.length>0 || incomeList.length>0){
@@ -102,15 +114,36 @@ function CardInfo({ budgetList, incomeList, expenseList}){
                   </div>
                   <Wallet className="bg-blue-800 p-3 h-12 w-12 rounded-full text-white" />
                 </div>
-                <div className="p-7 border rounded-2xl flex items-center justify-between">
-                  <div>
+                <div
+              className={`p-7 border rounded-2xl flex items-center justify-between ${
+                overBudget ? "border-red-500 bg-red-50" : ""
+              }`}
+            >
+              <div>
                     <h2 className="text-sm">Sum of Income Streams</h2>
                     <h2 className="font-bold text-2xl">
                       RM{formatNumber(totalIncome)}
                     </h2>
+                    <p className="text-xs mt-1">
+                    Difference with Total Budget:&nbsp;
+                    <span className="font-medium">
+                    RM{formatNumber(incomeMinusBudget)}
+                    </span>
+                    </p>
                   </div>
                   <CircleDollarSign className="bg-blue-800 p-3 h-12 w-12 rounded-full text-white" />
                 </div>
+                
+                <div className="p-7 border rounded-2xl flex items-center justify-between">
+                  <div>
+                    <h2 className="text-sm">Total Saving</h2>
+                    <h2 className="font-bold text-2xl">
+                      RM{formatNumber(totalBudget- totalSpend)}
+                    </h2>
+                  </div>
+                  <BicepsFlexed className="bg-blue-800 p-3 h-12 w-12 rounded-full text-white" />
+                </div>
+
               </div>
             </div>
           ) : (

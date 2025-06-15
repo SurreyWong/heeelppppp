@@ -1,50 +1,44 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import CreateIncomes from "./CreateIncomes";
+import CreateIncome from "./CreateIncomes"; 
 import { db } from "../../../../../../utils/dbConfig";
-import { desc, eq, getTableColumns, sql } from "drizzle-orm";
-import { Incomes, Expenses } from "../../../../../../utils/schema";
+import { desc, eq, getTableColumns } from "drizzle-orm";
+import { Incomes } from "../../../../../../utils/schema";
 import { useUser } from "@clerk/nextjs";
-import IncomeItem from "./IncomeItem";
+import IncomeItem from "./IncomeItem"; 
 
 function IncomeList() {
-  const [incomelist, setIncomelist] = useState([]);
+  const [incomeList, setIncomeList] = useState([]);
   const { user } = useUser();
+
   useEffect(() => {
-    user && getIncomelist();
+    user && getIncomeList();
   }, [user]);
 
-  const getIncomelist = async () => {
+  const getIncomeList = async () => {
     const result = await db
       .select({
         ...getTableColumns(Incomes),
-        totalSpend: sql`sum(${Expenses.amount})`.mapWith(Number),
-        totalItem: sql`count(${Expenses.id})`.mapWith(Number),
       })
       .from(Incomes)
-      .leftJoin(Expenses, eq(Incomes.id, Expenses.budgetId))
       .where(eq(Incomes.createdBy, user?.primaryEmailAddress?.emailAddress))
-      .groupBy(Incomes.id)
       .orderBy(desc(Incomes.id));
-    setIncomelist(result);
+
+    setIncomeList(result);
   };
 
   return (
     <div className="mt-7">
-      <div
-        className="grid grid-cols-1
-        md:grid-cols-2 lg:grid-cols-3 gap-5"
-      >
-        <CreateIncomes refreshData={() => getIncomelist()} />
-        {incomelist?.length > 0
-          ? incomelist.map((budget, index) => (
-              <IncomeItem budget={budget} key={index} />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <CreateIncome refreshData={getIncomeList} />
+        {incomeList.length > 0
+          ? incomeList.map((income, index) => (
+              <IncomeItem income={income} key={index} />
             ))
           : [1, 2, 3, 4, 5].map((item, index) => (
               <div
                 key={index}
-                className="w-full bg-slate-200 rounded-lg
-        h-[150px] animate-pulse"
+                className="w-full bg-slate-200 rounded-lg h-[150px] animate-pulse"
               ></div>
             ))}
       </div>

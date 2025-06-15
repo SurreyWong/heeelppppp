@@ -1,59 +1,117 @@
-"use client"
-import React, { useEffect, useState } from 'react'
-import CreateBudget from '../../budgets/_components/CreateBudget'
-import { db } from '../../../../../../utils/dbConfig';
-import { desc, eq, getTableColumns, sql } from 'drizzle-orm'
-import { Budgets, Expenses } from '../../../../../../utils/schema'
-import { useUser } from '@clerk/nextjs'
-import BudgetItem from '../../budgets/_components/BudgetItem'
+"use client";
 
-function BudgetList() {
+import React, { useState } from "react";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import EmojiPicker from "emoji-picker-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { db } from "../../../../../../utils/dbConfig";
+import { Incomes } from "../../../../../../utils/schema";
+import { useUser } from "@clerk/nextjs";
+import { toast } from "sonner";
 
-  const [budgetList,setBudgetList]=useState([]);
-  const {user}=useUser();
-  useEffect(()=>{
-    user&&getBudgetList();
-  },[user])
-  /**
-   * used to get budget List
-   */
-  const getBudgetList=async()=>{
+function CreateIncome({ refreshData }) {
+  const [emojiIcon, setEmojiIcon] = useState("💰");
+  const [openEmojiPicker, setOpenEmojiPicker] = useState(false);
 
-    const result=await db.select({
-      ...getTableColumns(Budgets),
-      totalSpend:sql `sum(${Expenses.amount})`.mapWith(Number),
-      totalItem: sql `count(${Expenses.id})`.mapWith(Number)
-    }).from(Budgets)
-    .leftJoin(Expenses,eq(Budgets.id,Expenses.budgetId))
-    .where(eq(Budgets.createdBy,user?.primaryEmailAddress?.emailAddress))
-    .groupBy(Budgets.id)
-    .orderBy(desc(Budgets.id))
-    ;
+  const [name, setName] = useState("");
+  const [amount, setAmount] = useState("");
 
-    setBudgetList(result);
+  const { user } = useUser();
 
-  }
+  const onCreateIncome = async () => {
+    const result = await db
+      .insert(Incomes)
+      .values({
+        name: name,
+        amount: amount,
+        createdBy: user?.primaryEmailAddress?.emailAddress,
+        icon: emojiIcon,
+      })
+      .returning({ insertedId: Incomes.id });
+
+    if (result) {
+      refreshData();
+      toast("New Income Added!");
+    }
+  };
 
   return (
-    <div className='mt-7'>
-        <div className='grid grid-cols-1
-        md:grid-cols-2 lg:grid-cols-3 gap-5'>
-        <CreateBudget
-        refreshData={()=>getBudgetList()}/>
-        {budgetList?.length>0? budgetList.map((budget,index)=>(
-          <BudgetItem budget={budget} key={index} />
-        ))
-      :[1,2,3,4,5].map((item,index)=>(
-        <div key={index} className='w-full bg-slate-200 rounded-lg
-        h-[150px] animate-pulse'>
-
-        </div>
-      ))
-      }
-        </div>
-       
+    <div>
+      <Dialog>
+        <DialogTrigger asChild>
+          <div
+            className="bg-slate-100 p-10 rounded-2xl
+            items-center flex flex-col border-2 border-dashed
+            cursor-pointer hover:shadow-md"
+          >
+            <h2 className="text-3xl">+</h2>
+            <h2>Add Income</h2>
+          </div>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Income</DialogTitle>
+            <DialogDescription>
+              <div className="mt-5">
+                <Button
+                  variant="outline"
+                  className="text-lg"
+                  onClick={() => setOpenEmojiPicker(!openEmojiPicker)}
+                >
+                  {emojiIcon}
+                </Button>
+                <div className="absolute z-20">
+                  <EmojiPicker
+                    open={openEmojiPicker}
+                    onEmojiClick={(e) => {
+                      setEmojiIcon(e.emoji);
+                      setOpenEmojiPicker(false);
+                    }}
+                  />
+                </div>
+                <div className="mt-2">
+                  <h2 className="text-black font-medium my-1">Income Source</h2>
+                  <Input
+                    placeholder="e.g. Freelance Work"
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                </div>
+                <div className="mt-2">
+                  <h2 className="text-black font-medium my-1">Amount</h2>
+                  <Input
+                    type="number"
+                    placeholder="e.g. RM2500"
+                    onChange={(e) => setAmount(e.target.value)}
+                  />
+                </div>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="sm:justify-start">
+            <DialogClose asChild>
+              <Button
+                disabled={!(name && amount)}
+                onClick={() => onCreateIncome()}
+                className="mt-5 w-full rounded-full"
+              >
+                Add Income
+              </Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
-  )
+  );
 }
 
-export default BudgetList
+export default CreateIncome;

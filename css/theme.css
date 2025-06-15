@@ -1,0 +1,13 @@
+#theme {
+  margin-right: 20px;
+}
+
+.darkmode {
+  background-color: #070b1d;
+  color: #ffffff;
+}
+
+body.darkmode {
+  background-color: #070b1d;
+  color: #ffffff;
+}

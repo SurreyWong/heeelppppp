@@ -1,39 +1,38 @@
 // utils/getFinancialAdvice.js
 import OpenAI from "openai";
 
-// Initialize the OpenAI client
+const apiKey = "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";
+
+if (!apiKey) {
+  console.error(" Groq API key is missing");
+}
+
 const openai = new OpenAI({
-  apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+  apiKey,
+  baseURL: "https://api.groq.com/openai/v1",
   dangerouslyAllowBrowser: true,
 });
 
-// Function to fetch user-specific data (mocked for this example)
-
-// Function to generate personalized financial advice
 const getFinancialAdvice = async (totalBudget, totalIncome, totalSpend) => {
-  console.log(totalBudget, totalIncome, totalSpend);
   try {
     const userPrompt = `
       Based on the following financial data:
-      - Total Budget: ${totalBudget} USD
-      - Expenses: ${totalSpend} USD 
-      - Incomes: ${totalIncome} USD
-      Provide detailed financial advice in 2 sentence to help the user manage their finances more effectively.
+      - Total Budget: RM${totalBudget}
+      - Expenses: RM${totalSpend}
+      - Income: RM${totalIncome}
+      Provide 2 sentences of personalized financial advice to help the user manage money better.
     `;
 
-    // Send the prompt to the OpenAI API
     const chatCompletion = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: "llama3-70b-8192",
       messages: [{ role: "user", content: userPrompt }],
     });
 
-    // Process and return the response
     const advice = chatCompletion.choices[0].message.content;
-
-    console.log(advice);
+    console.log(" Groq response:", advice);
     return advice;
   } catch (error) {
-    console.error("Error fetching financial advice:", error);
+    console.error(" Error from Groq:", error);
     return "Sorry, I couldn't fetch the financial advice at this moment. Please try again later.";
   }
 };
