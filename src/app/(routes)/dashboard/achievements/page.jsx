@@ -140,11 +140,14 @@ function AchievementPage() {
 
         const unlocked = current >= ach.target;
 
+        const existingAchievement = existingAchievements.find(a => a.name === ach.name);
+        const alreadyClaimed = existingAchievement?.claimed === 1;
+
         await db
           .update(Achievements)
           .set({
             progress: current,
-            earned: unlocked ? 1 : 0,
+            earned: alreadyClaimed ? 1 : unlocked ? 1 : 0,
           })
           .where(
             and(
@@ -152,6 +155,7 @@ function AchievementPage() {
               eq(Achievements.name, ach.name)
             )
           );
+
       }
 
       // Fetch updated achievements
