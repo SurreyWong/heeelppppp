@@ -1,6 +1,6 @@
 import Link from "next/link";
 import React from "react";
-import EditBudgetDialog from "./EditBudgetDialog"; // Create this file
+import EditBudgetDialog from "./EditBudgetDialog";
 import { Trash } from "lucide-react";
 import { db } from "../../../../../../utils/dbConfig";
 import { Budgets } from "../../../../../../utils/schema";
