@@ -1,8 +1,8 @@
 // utils/getFinancialAdvice.js
 import OpenAI from "openai";
 
-const apiKey = "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";
-
+//const apiKey = "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";
+const apiKey= process.env.NEXT_PUBLIC_GROQ_API_KEY;
 if (!apiKey) {
   console.error(" Groq API key is missing");
 }
