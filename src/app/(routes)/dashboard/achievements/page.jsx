@@ -133,30 +133,31 @@ function AchievementPage() {
       for (const ach of ALL_ACHIEVEMENTS) {
         let current = progressMap[ach.name] || 0;
 
-        // Cap "First Tracker" at 1
         if (ach.name === "First Tracker") {
           current = Math.min(current, 1);
         }
 
         const unlocked = current >= ach.target;
-
         const existingAchievement = existingAchievements.find(a => a.name === ach.name);
         const alreadyClaimed = existingAchievement?.claimed === 1;
 
-        await db
-          .update(Achievements)
-          .set({
-            progress: current,
-            earned: alreadyClaimed ? 1 : unlocked ? 1 : 0,
-          })
-          .where(
-            and(
-              eq(Achievements.userId, userId),
-              eq(Achievements.name, ach.name)
-            )
-          );
-
+        // Freeze progress if already claimed
+        if (!alreadyClaimed) {
+          await db
+            .update(Achievements)
+            .set({
+              progress: current,
+              earned: unlocked ? 1 : 0,
+            })
+            .where(
+              and(
+                eq(Achievements.userId, userId),
+                eq(Achievements.name, ach.name)
+              )
+            );
+        }
       }
+
 
       // Fetch updated achievements
       const updated = await db
