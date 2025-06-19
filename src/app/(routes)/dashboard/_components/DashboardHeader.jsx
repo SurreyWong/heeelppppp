@@ -1,10 +1,10 @@
-import {UserButton} from "@clerk/nextjs";
+import {UserButton, useUser, ClerkProvider} from "@clerk/nextjs";
 import React, { useEffect, useState } from "react";
-import { ClerkProvider } from '@clerk/nextjs';
-import {Moon, Sun, Footprints, Coins, Wallet, Compass, Banknote} from "lucide-react";
+import {Moon, Sun, Award, Trophy, Gift, Medal} from "lucide-react";
 import "../../../../../css/theme.css";
 
 function DashboardHeader() {
+  const { user } = useUser();
   const [darkMode, setDarkMode] = useState(false);
   const [badges, setBadges] = useState([]);
 
@@ -18,14 +18,22 @@ function DashboardHeader() {
   }, []);
 
   useEffect(() => {
-    const fetchBadges = async () => {
-      const res = await fetch("/api/achievements");
-      const data = await res.json();
-      const claimed = data.filter(b => b.claimed === 1);
-      setBadges(claimed);
-    };
-    fetchBadges();
-  }, []);
+  const fetchBadges = async () => {
+    const userId = user?.primaryEmailAddress?.emailAddress;
+    if (!userId) return;
+    const res = await fetch(`/api/achievements?userId=${userId}`);
+    const data = await res.json();
+    const claimed = data.filter((b) => b.claimed === 1);
+    setBadges(claimed);
+  };
+
+  fetchBadges();
+
+  window.addEventListener("achievement-claimed", fetchBadges);
+  return () => window.removeEventListener("achievement-claimed", fetchBadges);
+}, [user]);
+
+
 
   const toggleTheme = () => {
     const current = localStorage.getItem("darkmode");
@@ -41,12 +49,12 @@ function DashboardHeader() {
   };
 
   const badgeIconMap = {
-    "First Tracker": Footprints,
-    "Pennywise": Coins,
-    "Income Tracker": Wallet,
-    "Explorer": Compass,
-    "Budget Pro": Banknote,
+    "First Tracker": Award,
+    "Pennywise": Gift,
+    "Explorer": Medal,
+    "Budget Pro": Trophy,
   };
+  
 
   return (
     <div className='p-5 shadow-sm border-b flex justify-between'>
