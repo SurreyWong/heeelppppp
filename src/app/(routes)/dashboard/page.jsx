@@ -7,7 +7,7 @@ import { db } from "../../../../utils/dbConfig";
 import { desc, eq, getTableColumns, sql } from "drizzle-orm";
 import { Budgets, Expenses, Incomes } from "../../../../utils/schema";
 import BudgetItem from "./budgets/_components/BudgetItem";
-import ExpenseListTable from "./expenses/_components/ExpenseListTable";
+
 
 function Dashboard() {
   const { user } = useUser();
@@ -86,12 +86,6 @@ function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 mt-6 gap-5">
         <div className="lg:col-span-2">
           <BarChartDashboard budgetList={budgetList} />
-          <ExpenseListTable
-            expenseList={expenseList}
-            refreshData={() =>
-              getExpensesByBudget(selectedBudgetId)
-            }
-          />
         </div>
 
         <div className="grid gap-5">
