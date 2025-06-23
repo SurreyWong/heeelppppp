@@ -187,7 +187,7 @@ function AchievementPage() {
             >
               {Icon && <Icon className="w-6 h-6 mt-1 text-green-600" />}
               <div>
-                <h2 className="text-lg font-semibold">{ach.name}</h2>
+                <h2 className="text-lg font-semibold text-gray-600">{ach.name}</h2>
                 <p className="text-gray-600">{meta?.description}</p>
                 <div className="mt-2 text-sm text-gray-500">
                   Progress: {ach.progress} / {ach.target}
