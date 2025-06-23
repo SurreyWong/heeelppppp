@@ -1,5 +1,5 @@
 import {
-    integer, numeric, pgTable, serial, varchar
+    integer, numeric, pgTable, serial, varchar, unique
 } from 'drizzle-orm/pg-core'
 
 
@@ -26,15 +26,21 @@ export const Budgets = pgTable("budgets", {
     createdAt: varchar("createdAt").notNull(),
     createdBy: varchar("createdBy").notNull(),
   });
-  export const Achievements = pgTable("achievements", {
-  id: serial("id").primaryKey(),
-  userId: varchar("userId").notNull(),
-  name: varchar("name").notNull(),
-  earned: integer("earned").notNull().default(0),
-  claimed: integer("claimed").notNull().default(0),
-  progress: integer("progress").notNull().default(0),
-  target: integer("target").notNull().default(0), 
-});
+  export const Achievements = pgTable(
+  "achievements",
+  {
+    id: serial("id").primaryKey(),
+    userId: varchar("userId").notNull(),
+    name: varchar("name").notNull(),
+    earned: integer("earned").notNull().default(0),
+    claimed: integer("claimed").notNull().default(0),
+    progress: integer("progress").notNull().default(0),
+    target: integer("target").notNull().default(0),
+  },
+  (table) => ({
+    uniqueUserAchievement: unique().on(table.userId, table.name),
+  })
+);
 
 export const UserLogins = pgTable("user_logins", {
   id: serial("id").primaryKey(),
