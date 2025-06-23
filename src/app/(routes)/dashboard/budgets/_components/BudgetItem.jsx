@@ -40,7 +40,7 @@ function BudgetItem({ budget, refreshData }) {
               <h2 className="text-sm text-gray-500">{budget.totalItem} Item</h2>
             </div>
           </div>
-          <h2 className="font-bold text-primary text-lg">RM{budget.amount}</h2>
+          <h2 className="font-bold text-gray-550 text-lg">RM{budget.amount}</h2>
         </div>
 
         <div className="mt-5">
