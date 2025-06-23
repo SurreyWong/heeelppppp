@@ -11,10 +11,10 @@ function IncomeItem({ income, onEdit, onDelete }) {
           </h2>
           <div>
             <h2 className="font-bold">{income.name}</h2>
-            <h2 className="text-sm text-gray-500">Income Source</h2>
+          
           </div>
         </div>
-        <h2 className="font-bold text-primary text-lg">RM{income.amount}</h2>
+        <h2 className="font-bold text-gray-550 text-lg">RM{income.amount}</h2>
       </div>
 
       <div className="mt-3 flex justify-end gap-2">
