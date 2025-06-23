@@ -34,6 +34,8 @@ export const Budgets = pgTable("budgets", {
   name: varchar("name").notNull(),
   earned: integer("earned").notNull().default(0),
   claimed: integer("claimed").notNull().default(0),
-  progress: integer("progress").notNull().default(0),  // <-- new column for current progress
+  progress: integer("progress").notNull().default(0),
   target: integer("target").notNull().default(0), 
 });
+
+
