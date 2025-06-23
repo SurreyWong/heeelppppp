@@ -19,7 +19,7 @@ function Hero(){
         }
       >
         <img
-          src={`/screen.png`}
+          src={`screendark.png`}
           alt="hero"
           height={720}
           width={1400}
