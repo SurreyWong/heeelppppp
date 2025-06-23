@@ -54,8 +54,8 @@ function CreateIncome({ refreshData }) {
             items-center flex flex-col border-2 border-dashed
             cursor-pointer hover:shadow-md"
           >
-            <h2 className="text-3xl">+</h2>
-            <h2>Add Income</h2>
+            <h2 className="text-3xl text-gray-600">+</h2>
+            <h2 className="text-gray-600">Add Income</h2>
           </div>
         </DialogTrigger>
         <DialogContent>
