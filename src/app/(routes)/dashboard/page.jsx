@@ -60,21 +60,26 @@ function Dashboard() {
     setExpensesList(result);
   };
 
-  const getIncomeList = async () => {
+ const getIncomeList = async () => {
     try {
+      const userId = user?.primaryEmailAddress?.emailAddress;
+
+      if (!userId) return;
+
       const result = await db
         .select({
           ...getTableColumns(Incomes),
-          totalAmount: sql`SUM(CAST(${Incomes.amount} AS NUMERIC))`.mapWith(Number),
         })
         .from(Incomes)
-        .groupBy(Incomes.id);
+        .where(eq(Incomes.createdBy, userId)) 
+        .orderBy(desc(Incomes.id));
 
-      setIncomeList(result);
+      setIncomeList(result); 
     } catch (error) {
       console.error("Error fetching income list:", error);
     }
   };
+
 
   return (
     <div className="p-8">
