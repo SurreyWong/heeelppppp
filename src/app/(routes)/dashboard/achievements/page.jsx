@@ -92,17 +92,21 @@ function AchievementPage() {
       );
 
       if (missingAchievements.length > 0) {
-        await db.insert(Achievements).values(
-          missingAchievements.map((a) => ({
-            userId,
-            name: a.name,
-            target: a.target,
-            earned: 0,
-            claimed: 0,
-            progress: 0,
-          }))
-        );
+        await db
+          .insert(Achievements)
+          .values(
+            missingAchievements.map((a) => ({
+              userId,
+              name: a.name,
+              target: a.target,
+              earned: 0,
+              claimed: 0,
+              progress: 0,
+            }))
+          )
+          .onConflictDoNothing(); 
       }
+
 
       // Gather progress data
       const expenses = await db
