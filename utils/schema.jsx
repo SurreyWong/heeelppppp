@@ -2,9 +2,7 @@ import {
     integer, numeric, pgTable, serial, varchar
 } from 'drizzle-orm/pg-core'
 
-//import { pgTable, integer, serial, text, timestamp } from 'drizzle-orm/pg-core';
 
-//budget schema
 export const Budgets = pgTable("budgets", {
     id: serial("id").primaryKey(),
     name: varchar("name").notNull(),
@@ -38,4 +36,9 @@ export const Budgets = pgTable("budgets", {
   target: integer("target").notNull().default(0), 
 });
 
+export const UserLogins = pgTable("user_logins", {
+  id: serial("id").primaryKey(),
+  userId: varchar("userId").notNull(),
+  loginDate: varchar("loginDate").notNull(),
+});
 
