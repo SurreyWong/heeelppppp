@@ -7,6 +7,20 @@ function DashboardHeader() {
   const { user } = useUser();
   const [darkMode, setDarkMode] = useState(false);
   const [badges, setBadges] = useState([]);
+  const [level, setLevel] = useState(1);
+
+  useEffect(() => {
+    const fetchLevel = async () => {
+      const userId = user?.primaryEmailAddress?.emailAddress;
+      if (!userId) return;
+      const res = await fetch(`/api/level?userId=${userId}`);
+      const data = await res.json();
+      setLevel(data.level);
+    };
+
+    fetchLevel();
+  }, [user]);
+
 
 
   useEffect(() => {
@@ -68,11 +82,13 @@ function DashboardHeader() {
         })}
       </div>
       <div className="flex items-center gap-4">
-        <button id="theme" onClick={toggleTheme}>
-          {darkMode ? <Sun /> : <Moon />}
-        </button>
-        <UserButton afterSignOutUrl="/" />
-      </div>
+      <button id="theme" onClick={toggleTheme}>
+        {darkMode ? <Sun /> : <Moon />}
+      </button>
+      <span className="text-sm font-semibold">Level {level}</span> {}
+      <UserButton afterSignOutUrl="/" />
+    </div>
+
     </div>
   );
 }
