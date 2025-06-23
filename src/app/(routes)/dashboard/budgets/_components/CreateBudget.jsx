@@ -57,13 +57,13 @@ function CreateBudget({ refreshData }) {
             items-center flex flex-col border-2 border-dashed
             cursor-pointer hover:shadow-md"
           >
-            <h2 className="text-3xl">+</h2>
-            <h2>Create New Budget</h2>
+            <h2 className="text-3xl text-gray-600">+</h2>
+            <h2 className="text-gray-600">Create New Budget</h2>
           </div>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create New Budget</DialogTitle>
+            <DialogTitle >Create New Budget</DialogTitle>
             <DialogDescription>
               <div className="mt-5">
                 <Button
