@@ -31,31 +31,60 @@ function AddExpenseForm({ refreshData }) {
   }, [user]);
 
   const handleAddExpense = async () => {
+  try {
     if (!expenseName || !expenseAmount || !selectedBudgetId) {
       toast.error("Please fill in all fields.");
       return;
     }
 
+    const today = new Date().toISOString().slice(0, 10);
+
+    const todayExpenses = await db
+      .select()
+      .from(Expenses)
+      .where(eq(Expenses.createdBy, user?.primaryEmailAddress?.emailAddress));
+
+    const hasExpenseToday = todayExpenses.some(
+      (exp) => exp.createdAt.slice(0, 10) === today
+    );
+
+    console.log("Has Expense Today:", hasExpenseToday);
+
+    // Start debugging
+    console.log("Inserting expense...");
     await db.insert(Expenses).values({
-  name: expenseName,
-  amount: Number(expenseAmount),
-  budgetId: Number(selectedBudgetId),
-  createdAt: new Date().toISOString(),
-  createdBy: user?.primaryEmailAddress?.emailAddress,
-});
+      name: expenseName,
+      amount: Number(expenseAmount),
+      budgetId: Number(selectedBudgetId),
+      createdAt: new Date().toISOString(),
+      createdBy: user?.primaryEmailAddress?.emailAddress,
+    });
+    console.log("Expense inserted successfully");
+    // Stop debugging
 
-  
 
-    toast.success("Expense Added!");
+    if (!hasExpenseToday) {
+      const quotes = [
+        "Your wallet will thank you later!",
+        "Saving is a habit and YOU SLAAAAAAAAAYYYYYY!",
+        "You are in control of your own money!",
+        "A budget is telling your money where it go instead of where it went",
+        "Just a little time you spend here will lead to big changes",
+      ];
+      const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+      toast.info(randomQuote);
+    }
 
-    // Clear form
     setExpenseName("");
     setExpenseAmount("");
     setSelectedBudgetId("");
-
-    // Optional: refresh budget list if passed
     refreshData && refreshData();
-  };
+  } catch (error) {
+    console.error("Add Expense Error:", error);
+    toast.error("Failed to add expense.");
+  }
+};
+
 
   return (
     <div className="mt-5 border p-5 rounded-xl">
