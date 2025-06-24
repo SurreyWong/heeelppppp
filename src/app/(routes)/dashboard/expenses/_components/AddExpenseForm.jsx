@@ -106,7 +106,7 @@ function AddExpenseForm({ refreshData }) {
           onChange={(e) => setSelectedBudgetId(e.target.value)}
           className="border p-2 rounded w-full"
         >
-          <option value="">-- Select a Budget --</option>
+          <option value="">-- Select a Category --</option>
           {budgetList.map((budget) => (
             <option key={budget.id} value={budget.id}>
               {budget.name}
