@@ -42,7 +42,7 @@ export async function GET(req) {
     }
   }
 
-  const level = streak === 7 ? 2 : 1;
+  const level = streak >= 7 ? 2 : 1;
   console.log("Streak Counted:", streak);
   console.log("Level:", level);
 
